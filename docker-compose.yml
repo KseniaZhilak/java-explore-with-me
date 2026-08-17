@@ -1,14 +1,30 @@
 services:
-  stats-server:
+  server-stat:
     ports:
       - "9090:9090"
+    build:
+      context: ./stats/server-stat
+      dockerfile: stats/server-stat/Dockerfile
 
   stats-db:
     image: postgres:16.1
+    container_name: postgres_stat
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=statsdb
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=12345
 
-  ewm-service:
+  main-service:
     ports:
       - "8080:8080"
+    build:
+      context: ./main-service/Dockerfile
+      dockerfile: main-service/Dockerfile
 
-  ewm-db:
+  main-db:
     image: postgres:16.1
+    container_name: postgres_main
