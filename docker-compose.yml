@@ -2,9 +2,7 @@ services:
   server-stat:
     ports:
       - "9090:9090"
-    build:
-      context: ./stats/server-stat
-      dockerfile: stats/server-stat/Dockerfile
+    build: ./stats/server-stat
 
   stats-db:
     image: postgres:16.1
@@ -21,9 +19,7 @@ services:
   main-service:
     ports:
       - "8080:8080"
-    build:
-      context: ./main-service/Dockerfile
-      dockerfile: main-service/Dockerfile
+    build: ./main-service/Dockerfile
 
   main-db:
     image: postgres:16.1

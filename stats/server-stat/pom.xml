@@ -11,4 +11,16 @@
 
     <artifactId>server-stat</artifactId>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>ru.practicum.stat.ApplicationServerStat</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
