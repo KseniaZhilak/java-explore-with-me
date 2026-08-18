@@ -11,4 +11,13 @@
 
     <artifactId>dto-stat</artifactId>
 
+    <dependencies>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>annotationProcessor</scope>
+        </dependency>
+    </dependencies>
+
 </project>
