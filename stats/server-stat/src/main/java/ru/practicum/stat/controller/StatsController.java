@@ -1,5 +1,6 @@
 package ru.practicum.stat.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.stat.dto.EndpointHitDto;
 import ru.practicum.stat.dto.ViewStatsDto;
@@ -27,7 +28,7 @@ public class StatsController {
     }
 
     @PostMapping("/hit")
-    public EndpointHitDto createStat(@RequestBody EndpointHitDto hitDto) {
+    public EndpointHitDto createStat(@RequestBody @Valid EndpointHitDto hitDto) {
         return statService.createHit(hitDto);
     }
 
