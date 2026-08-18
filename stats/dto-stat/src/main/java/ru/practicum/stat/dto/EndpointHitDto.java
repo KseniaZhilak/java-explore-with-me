@@ -1,10 +1,13 @@
 package ru.practicum.stat.dto;
 
-import lombok.Data;
+import lombok.*;
 
 import java.time.Instant;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class EndpointHitDto {
 
     private String app;
