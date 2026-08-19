@@ -1,5 +1,6 @@
 package ru.practicum.stat.repository;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -30,6 +32,6 @@ public class HitEntity {
     private String ip;
 
     @Column(name = "event_time", nullable = false)
-    private Instant timestamp;
+    private LocalDateTime timestamp;
 
 }

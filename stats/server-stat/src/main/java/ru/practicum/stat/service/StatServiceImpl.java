@@ -24,7 +24,12 @@ public class StatServiceImpl implements StatService {
 
     @Override
     public List<ViewStatsDto> getListStat(LocalDateTime start, LocalDateTime end, Boolean unique, Collection<String> uris) {
-        return List.of();
+        boolean filterByUris = uris != null && !uris.isEmpty();
+        if(Boolean.TRUE.equals(unique)) {
+            return hitRepository.findUniqueStats(start, end, uris, filterByUris);
+        } else {
+            return hitRepository.findStats(start, end, uris, filterByUris);
+        }
     }
 
     @Override

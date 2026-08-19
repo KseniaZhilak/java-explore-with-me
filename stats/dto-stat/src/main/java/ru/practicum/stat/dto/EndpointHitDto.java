@@ -1,10 +1,12 @@
 package ru.practicum.stat.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -25,7 +27,7 @@ public class EndpointHitDto {
     private String ip;
 
     @NonNull
-    @JsonDeserialize(using = CustomInstantDeserializer.class)
-    private Instant timestamp;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime timestamp;
 
 }

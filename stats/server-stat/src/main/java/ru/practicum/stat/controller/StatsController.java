@@ -1,6 +1,7 @@
 package ru.practicum.stat.controller;
 
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.stat.dto.EndpointHitDto;
 import ru.practicum.stat.dto.ViewStatsDto;
@@ -20,10 +21,15 @@ public class StatsController {
     }
 
     @GetMapping("/stats")
-    public List<ViewStatsDto> getListStat(@RequestParam LocalDateTime start,
-                                          @RequestParam LocalDateTime end,
-                                          @RequestParam(required = false) Boolean unique,
-                                          @RequestParam(required = false) Collection<String> uris) {
+    public List<ViewStatsDto> getListStat(
+            @RequestParam
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+            LocalDateTime start,
+            @RequestParam
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+            LocalDateTime end,
+            @RequestParam(defaultValue = "false") Boolean unique,
+            @RequestParam(defaultValue = "") Collection<String> uris) {
         return statService.getListStat(start, end, unique, uris);
     }
 

@@ -3,6 +3,7 @@ package ru.practicum.stat.repository.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.practicum.stat.dto.EndpointHitDto;
+import ru.practicum.stat.dto.ViewStatsDto;
 import ru.practicum.stat.repository.HitEntity;
 
 import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
@@ -14,5 +15,8 @@ public interface HitMapper {
     HitEntity toHitEntity(EndpointHitDto hitDto);
 
     EndpointHitDto toEndpointHitDto(HitEntity hitEntity);
+
+    @Mapping(target = "hits", ignore = true)
+    ViewStatsDto toViewStatsDto(HitEntity hitEntity);
 
 }
