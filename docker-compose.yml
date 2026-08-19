@@ -1,5 +1,5 @@
 services:
-  server-stat:
+  stats-server:
     ports:
       - "9090:9090"
     build: ./stats/server-stat
@@ -25,11 +25,11 @@ services:
       retries: 10
       start_period: 10s
 
-#  main-service:
-#    ports:
-#      - "8080:8080"
-#    build: ./main-service/Dockerfile
-#
+  ewm-service:
+    ports:
+      - "8080:8080"
+    build: ./main-service
+
 #  main-db:
 #    image: postgres:16.1
 #    container_name: postgres_main
