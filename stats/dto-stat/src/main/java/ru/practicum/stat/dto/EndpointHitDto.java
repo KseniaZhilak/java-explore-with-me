@@ -1,11 +1,9 @@
 package ru.practicum.stat.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Getter
