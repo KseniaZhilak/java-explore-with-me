@@ -29,7 +29,22 @@ services:
     ports:
       - "8080:8080"
     build: ./main-service
+    depends_on:
+      main-db:
+        condition: service_healthy
 
-#  main-db:
-#    image: postgres:16.1
-#    container_name: postgres_main
+  main-db:
+    image: postgres:16.1
+    container_name: postgres_main
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_DB=maindb
+      - POSTGRES_USER=main
+      - POSTGRES_PASSWORD=12345
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U main -d maindb" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
