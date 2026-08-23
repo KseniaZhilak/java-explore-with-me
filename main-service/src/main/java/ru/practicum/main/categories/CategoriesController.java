@@ -2,11 +2,9 @@ package ru.practicum.main.categories;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.main.categories.dto.CategoryDto;
+import ru.practicum.main.categories.dto.UpdateCategoryDto;
 
 @RestController
 public class CategoriesController {
@@ -21,6 +19,12 @@ public class CategoriesController {
     @ResponseStatus(HttpStatus.CREATED)
     CategoryDto createCategory(@RequestBody  @Valid CategoryDto categoryDto) {
         return categoriesService.createCategory(categoryDto);
+    }
+
+    @PatchMapping("/admin/categories/{catId}")
+    CategoryDto updateCategory(@RequestBody  @Valid UpdateCategoryDto categoryDto,
+                               @PathVariable Long catId) {
+        return categoriesService.updateCategory(categoryDto, catId);
     }
 
 }

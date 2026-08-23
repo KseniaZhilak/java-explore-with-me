@@ -6,4 +6,6 @@ public interface CategoriesRepository extends JpaRepository<CategoriesEntity, Lo
 
     Boolean existsByNameEqualsIgnoreCase(String name);
 
+    boolean existsById(Long id);
+
 }

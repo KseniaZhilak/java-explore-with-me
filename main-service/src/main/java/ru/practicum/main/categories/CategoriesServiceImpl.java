@@ -2,10 +2,12 @@ package ru.practicum.main.categories;
 
 import org.springframework.stereotype.Service;
 import ru.practicum.main.categories.dto.CategoryDto;
+import ru.practicum.main.categories.dto.UpdateCategoryDto;
 import ru.practicum.main.categories.repository.CategoriesEntity;
 import ru.practicum.main.categories.repository.CategoriesRepository;
 import ru.practicum.main.categories.repository.mapper.CategoriesMapper;
 import ru.practicum.main.exception.ConflictException;
+import ru.practicum.main.exception.NotFoundException;
 
 @Service
 public class CategoriesServiceImpl implements CategoriesService {
@@ -26,6 +28,19 @@ public class CategoriesServiceImpl implements CategoriesService {
         }
         CategoriesEntity newCategory = categoriesRepository.save(entity);
         return categoriesMapper.toDto(newCategory);
+    }
+
+    @Override
+    public CategoryDto updateCategory(UpdateCategoryDto updateCategoryDto, Long id) {
+        if(!categoriesRepository.existsById(id)) {
+            throw new NotFoundException("Category not found");
+        }
+        CategoriesEntity entity = categoriesMapper.toEntity(updateCategoryDto);
+        if(categoriesRepository.existsByNameEqualsIgnoreCase(entity.getName())) {
+            throw new ConflictException("Category already exists");
+        }
+        CategoriesEntity updatedCategory = categoriesRepository.save(entity);
+        return categoriesMapper.toDto(updatedCategory);
     }
 
 }

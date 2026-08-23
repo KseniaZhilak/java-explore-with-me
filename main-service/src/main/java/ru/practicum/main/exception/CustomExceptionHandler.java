@@ -55,4 +55,16 @@ public class CustomExceptionHandler {
         );
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NotFoundException.class)
+    public ExceptionDetail notFoundException(NotFoundException ex) {
+        return new ExceptionDetail(
+                HttpStatus.NOT_FOUND.name(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                ex.getMessage(),
+                LocalDateTime.now()
+                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        );
+    }
+
 }
