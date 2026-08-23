@@ -61,4 +61,12 @@ public class CategoriesServiceImpl implements CategoriesService {
         return categoriesMapper.toDto(updatedCategory);
     }
 
+    @Override
+    public void deleteCategory(Long id) {
+        if(!categoriesRepository.existsById(id)) {
+            throw new NotFoundException("Category not found");
+        }
+        categoriesRepository.deleteById(id);
+    }
+
 }
