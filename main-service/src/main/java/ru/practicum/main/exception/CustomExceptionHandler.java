@@ -15,14 +15,14 @@ public class CustomExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ExceptionDetail badRequestException(MethodArgumentNotValidException ex) {
+    public ApiError badRequestException(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .collect(Collectors.joining(", "));
 
-        return new ExceptionDetail(
+        return new ApiError(
                 HttpStatus.BAD_REQUEST.name(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 message,
@@ -33,8 +33,8 @@ public class CustomExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BadRequestException.class)
-    public ExceptionDetail badRequestException(BadRequestException ex) {
-        return new ExceptionDetail(
+    public ApiError badRequestException(BadRequestException ex) {
+        return new ApiError(
                 HttpStatus.BAD_REQUEST.name(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 ex.getMessage(),
@@ -45,8 +45,8 @@ public class CustomExceptionHandler {
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(ConflictException.class)
-    public ExceptionDetail conflictException(ConflictException ex) {
-        return new ExceptionDetail(
+    public ApiError conflictException(ConflictException ex) {
+        return new ApiError(
                 HttpStatus.CONFLICT.name(),
                 HttpStatus.CONFLICT.getReasonPhrase(),
                 ex.getMessage(),
@@ -57,10 +57,22 @@ public class CustomExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
-    public ExceptionDetail notFoundException(NotFoundException ex) {
-        return new ExceptionDetail(
+    public ApiError notFoundException(NotFoundException ex) {
+        return new ApiError(
                 HttpStatus.NOT_FOUND.name(),
                 HttpStatus.NOT_FOUND.getReasonPhrase(),
+                ex.getMessage(),
+                LocalDateTime.now()
+                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        );
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(ForbiddenException.class)
+    public ApiError forbiddenException(ForbiddenException ex) {
+        return new ApiError(
+                HttpStatus.FORBIDDEN.name(),
+                HttpStatus.FORBIDDEN.getReasonPhrase(),
                 ex.getMessage(),
                 LocalDateTime.now()
                         .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))

@@ -1,4 +1,4 @@
-package ru.practicum.stat.dto;
+package ru.practicum.main.users.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,12 +7,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class ViewStatsDto {
+@NoArgsConstructor
+public class UserShortDto {
 
-    private String app;
-    private String uri;
-    private Long hits;
+    private Long id;
+    private String name;
 
 }

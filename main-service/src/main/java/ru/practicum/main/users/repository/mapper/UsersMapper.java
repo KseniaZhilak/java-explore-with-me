@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.practicum.main.users.dto.NewUserRequest;
 import ru.practicum.main.users.dto.UserDto;
+import ru.practicum.main.users.dto.UserShortDto;
 import ru.practicum.main.users.repository.UsersEntity;
 
 import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
@@ -13,6 +14,8 @@ public interface UsersMapper {
 
     @Mapping(target = "id", ignore = true)
     UsersEntity toEntity(NewUserRequest userDto);
+
+    UsersEntity toEntity(UserShortDto userShortDto);
 
     UserDto toDto(UsersEntity usersEntity);
 
