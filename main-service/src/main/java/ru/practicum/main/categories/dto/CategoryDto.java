@@ -12,7 +12,6 @@ public class CategoryDto {
 
     Long id;
 
-    @NotNull
     @NotBlank(message = "Название категории не может быть пустым!")
     String name;
 
