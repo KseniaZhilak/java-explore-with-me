@@ -11,7 +11,6 @@ import ru.practicum.main.exception.NotFoundException;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CategoriesServiceImpl implements CategoriesService {
@@ -41,7 +40,7 @@ public class CategoriesServiceImpl implements CategoriesService {
     @Override
     public CategoryDto createCategory(CategoryDto categoryDto) {
         CategoriesEntity entity = categoriesMapper.toEntity(categoryDto);
-        if(categoriesRepository.existsByNameEqualsIgnoreCase(entity.getName())) {
+        if (categoriesRepository.existsByNameEqualsIgnoreCase(entity.getName())) {
             throw new ConflictException("Category already exists");
         }
         CategoriesEntity newCategory = categoriesRepository.save(entity);
@@ -50,11 +49,11 @@ public class CategoriesServiceImpl implements CategoriesService {
 
     @Override
     public CategoryDto updateCategory(UpdateCategoryDto updateCategoryDto, Long id) {
-        if(!categoriesRepository.existsById(id)) {
+        if (!categoriesRepository.existsById(id)) {
             throw new NotFoundException("Category not found");
         }
         CategoriesEntity entity = categoriesMapper.toEntity(updateCategoryDto);
-        if(categoriesRepository.existsByNameEqualsIgnoreCase(entity.getName())) {
+        if (categoriesRepository.existsByNameEqualsIgnoreCase(entity.getName())) {
             throw new ConflictException("Category already exists");
         }
         CategoriesEntity updatedCategory = categoriesRepository.save(entity);
@@ -63,7 +62,7 @@ public class CategoriesServiceImpl implements CategoriesService {
 
     @Override
     public void deleteCategory(Long id) {
-        if(!categoriesRepository.existsById(id)) {
+        if (!categoriesRepository.existsById(id)) {
             throw new NotFoundException("Category not found");
         }
         categoriesRepository.deleteById(id);
