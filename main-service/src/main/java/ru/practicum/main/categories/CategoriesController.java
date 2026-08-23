@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.main.categories.dto.CategoryDto;
 import ru.practicum.main.categories.dto.UpdateCategoryDto;
 
+import java.util.Collection;
+
 @RestController
 public class CategoriesController {
 
@@ -25,6 +27,18 @@ public class CategoriesController {
     CategoryDto updateCategory(@RequestBody  @Valid UpdateCategoryDto categoryDto,
                                @PathVariable Long catId) {
         return categoriesService.updateCategory(categoryDto, catId);
+    }
+
+    @GetMapping("/categories")
+    Collection<CategoryDto> getAllCategories(
+            @RequestParam(defaultValue = "0") int from,
+            @RequestParam(defaultValue = "10") int size) {
+        return categoriesService.getAllCategories(from, size);
+    }
+
+    @GetMapping("/categories/{catId}")
+    CategoryDto getCategory(@PathVariable Long catId) {
+        return categoriesService.getCategoryById(catId);
     }
 
 }
