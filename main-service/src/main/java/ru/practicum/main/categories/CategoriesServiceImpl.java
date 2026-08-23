@@ -5,6 +5,7 @@ import ru.practicum.main.categories.dto.CategoryDto;
 import ru.practicum.main.categories.repository.CategoriesEntity;
 import ru.practicum.main.categories.repository.CategoriesRepository;
 import ru.practicum.main.categories.repository.mapper.CategoriesMapper;
+import ru.practicum.main.exception.ConflictException;
 
 @Service
 public class CategoriesServiceImpl implements CategoriesService {
@@ -20,6 +21,9 @@ public class CategoriesServiceImpl implements CategoriesService {
     @Override
     public CategoryDto createCategory(CategoryDto categoryDto) {
         CategoriesEntity entity = categoriesMapper.toEntity(categoryDto);
+        if(categoriesRepository.existsByNameEqualsIgnoreCase(entity.getName())) {
+            throw new ConflictException("Category already exists");
+        }
         CategoriesEntity newCategory = categoriesRepository.save(entity);
         return categoriesMapper.toDto(newCategory);
     }
