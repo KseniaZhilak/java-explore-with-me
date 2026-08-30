@@ -1,6 +1,7 @@
 package ru.practicum.main.users;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.main.exception.ConflictException;
 import ru.practicum.main.exception.NotFoundException;
 import ru.practicum.main.users.dto.NewUserRequest;
@@ -13,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class UsersServiceImpl implements UsersService {
 
     private final UsersRepository usersRepository;
@@ -24,6 +26,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
+    @Transactional
     public UserDto createUser(NewUserRequest userDto) {
         if (usersRepository.existsByEmailEqualsIgnoreCase(userDto.getEmail())) {
             throw new ConflictException("User already exists");
@@ -42,6 +45,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(Long id) {
         if (!usersRepository.existsById(id)) {
             throw new NotFoundException("User not found");

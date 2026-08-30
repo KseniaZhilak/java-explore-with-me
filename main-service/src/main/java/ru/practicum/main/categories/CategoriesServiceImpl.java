@@ -1,6 +1,7 @@
 package ru.practicum.main.categories;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.main.categories.dto.CategoryDto;
 import ru.practicum.main.categories.dto.UpdateCategoryDto;
 import ru.practicum.main.categories.repository.CategoriesEntity;
@@ -11,8 +12,10 @@ import ru.practicum.main.exception.NotFoundException;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 public class CategoriesServiceImpl implements CategoriesService {
 
     private final CategoriesRepository categoriesRepository;
@@ -38,6 +41,7 @@ public class CategoriesServiceImpl implements CategoriesService {
     }
 
     @Override
+    @Transactional
     public CategoryDto createCategory(CategoryDto categoryDto) {
         CategoriesEntity entity = categoriesMapper.toEntity(categoryDto);
         if (categoriesRepository.existsByNameEqualsIgnoreCase(entity.getName())) {
@@ -48,19 +52,23 @@ public class CategoriesServiceImpl implements CategoriesService {
     }
 
     @Override
+    @Transactional
     public CategoryDto updateCategory(UpdateCategoryDto updateCategoryDto, Long id) {
-        if (!categoriesRepository.existsById(id)) {
+        Optional<CategoriesEntity> categories = categoriesRepository.findById(id);
+        if (categories.isEmpty()) {
             throw new NotFoundException("Category not found");
         }
-        CategoriesEntity entity = categoriesMapper.toEntity(updateCategoryDto);
-        if (categoriesRepository.existsByNameEqualsIgnoreCase(entity.getName())) {
+        if (categoriesRepository.existsByNameEqualsIgnoreCase(updateCategoryDto.getName())) {
             throw new ConflictException("Category already exists");
         }
+
+        CategoriesEntity entity = categoriesMapper.toUpdatedEntity(updateCategoryDto, categories.get());
         CategoriesEntity updatedCategory = categoriesRepository.save(entity);
         return categoriesMapper.toDto(updatedCategory);
     }
 
     @Override
+    @Transactional
     public void deleteCategory(Long id) {
         if (!categoriesRepository.existsById(id)) {
             throw new NotFoundException("Category not found");

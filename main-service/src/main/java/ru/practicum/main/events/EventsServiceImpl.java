@@ -2,6 +2,7 @@ package ru.practicum.main.events;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import ru.practicum.main.categories.repository.CategoriesEntity;
 import ru.practicum.main.categories.repository.CategoriesRepository;
@@ -51,20 +52,17 @@ public class EventsServiceImpl implements EventsService {
     }
 
     @Override
+    @Transactional
     public EventFullDto createEvent(NewEventDto eventDto, Long userId) {
         CategoriesEntity category = categoriesRepository.findById(eventDto.getCategory())
                 .orElseThrow(() -> new NotFoundException("Category not found"));
         UsersEntity usersEntity = usersRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found"));
-        State state = determineState(eventDto.getParticipantLimit(), eventDto.getRequestModeration());
 
         EventsEntity entity = eventsMapper.toEntity(eventDto);
         entity.setCategory(category);
         entity.setUser(usersEntity);
-        entity.setState(state);
-        if (state.equals(PUBLISHED)) {
-            entity.setPublishedOn(LocalDateTime.now());
-        }
+        entity.setState(PENDING);
 
         EventsEntity saved = eventsRepository.save(entity);
         EventFullDto eventFullDto = eventsMapper.toEventFullDto(saved);
@@ -73,10 +71,9 @@ public class EventsServiceImpl implements EventsService {
     }
 
     @Override
+    @Transactional
     public EventFullDto updateEvent(Long userId, Long id, UpdateEventUserRequest eventDto) {
-        UsersEntity usersEntity = usersRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found"));
-        EventsEntity entity = eventsRepository.findByIdAndUserId(id, usersEntity.getId())
+        EventsEntity entity = eventsRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new NotFoundException("Event not found"));
 
         if (PUBLISHED.equals(entity.getState())) {
@@ -102,17 +99,17 @@ public class EventsServiceImpl implements EventsService {
     }
 
     @Override
+    @Transactional
     public EventRequestStatusUpdateResult updateEventStatus(
             EventRequestStatusUpdateRequest updateDto, Long userId, Long eventId) {
-        UsersEntity usersEntity = usersRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found"));
-        EventsEntity entity = eventsRepository.findByIdAndUserId(eventId, usersEntity.getId())
+        EventsEntity entity = eventsRepository.findByIdAndUserId(eventId, userId)
                 .orElseThrow(() -> new NotFoundException("Event not found"));
         // todo доделать после реализации реквестов
         return null;
     }
 
     @Override
+    @Transactional
     public EventFullDto updateEventAdmin(Long id, UpdateEventAdminRequest eventDto) {
         EventsEntity entity = eventsRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Event not found"));
@@ -156,9 +153,7 @@ public class EventsServiceImpl implements EventsService {
 
     @Override
     public EventFullDto getEventById(Long userId, Long id) {
-        UsersEntity usersEntity = usersRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found"));
-        EventsEntity entity = eventsRepository.findByIdAndUserId(id, usersEntity.getId())
+        EventsEntity entity = eventsRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new NotFoundException("Event not found"));
         return toEventFullDtoWithViews(entity);
     }
@@ -224,13 +219,6 @@ public class EventsServiceImpl implements EventsService {
             log.warn("Stats service is unavailable, views are set to {}: {}", NO_VIEWS, e.getMessage());
             return Map.of();
         }
-    }
-
-    private static State determineState(int limit, boolean moderation) {
-        if (limit == 0 || !moderation) {
-            return PUBLISHED;
-        }
-        return PENDING;
     }
 
     private static State doUpdateState(EventsEntity entity, State newState) {
