@@ -1,12 +1,17 @@
 package ru.practicum.main.events;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.main.events.dto.*;
 import ru.practicum.main.events.dto.requests.EventRequestStatusUpdateRequest;
 import ru.practicum.main.events.dto.requests.EventRequestStatusUpdateResult;
+import ru.practicum.main.events.states.EventSort;
 import ru.practicum.main.events.states.State;
 import ru.practicum.main.requests.dto.ParticipationRequestDto;
 
@@ -15,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 @RestController
+@Validated
 public class EventsController {
 
     private final EventsService eventsService;
@@ -29,6 +35,29 @@ public class EventsController {
             @RequestBody @Valid NewEventDto eventDto,
             @PathVariable Long userId) {
         return eventsService.createEvent(eventDto, userId);
+    }
+
+    @GetMapping("/events")
+    public Collection<EventShortDto> getEvents(
+            @RequestParam(required = false) String text,
+            @RequestParam(defaultValue = "") List<Long> categories,
+            @RequestParam(required = false) Boolean paid,
+            @RequestParam(required = false)
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
+            @RequestParam(required = false)
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
+            @RequestParam(defaultValue = "false") Boolean onlyAvailable,
+            @RequestParam(required = false) EventSort sort,
+            @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+            @RequestParam(defaultValue = "10") @Positive int size,
+            HttpServletRequest request
+    ) {
+        return eventsService.getEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size, request);
+    }
+
+    @GetMapping("/events/{id}")
+    public EventFullDto getEvent(@PathVariable Long id, HttpServletRequest request) {
+        return eventsService.getEventById(id, request);
     }
 
     @GetMapping("/users/{userId}/events")

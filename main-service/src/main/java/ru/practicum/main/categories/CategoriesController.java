@@ -41,7 +41,7 @@ public class CategoriesController {
         return categoriesService.getCategoryById(catId);
     }
 
-    @DeleteMapping("/categories/{catId}")
+    @DeleteMapping("/admin/categories/{catId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void deleteCategory(@PathVariable Long catId) {
         categoriesService.deleteCategory(catId);

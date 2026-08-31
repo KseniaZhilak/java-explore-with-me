@@ -1,7 +1,9 @@
 package ru.practicum.main.compilations.repository;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.main.events.repository.EventsEntity;
 
 import java.util.HashSet;

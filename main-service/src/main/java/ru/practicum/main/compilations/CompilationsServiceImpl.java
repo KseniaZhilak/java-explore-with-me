@@ -12,7 +12,10 @@ import ru.practicum.main.events.repository.EventsEntity;
 import ru.practicum.main.events.repository.EventsRepository;
 import ru.practicum.main.exception.NotFoundException;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class CompilationsServiceImpl implements CompilationsService {
@@ -29,9 +32,9 @@ public class CompilationsServiceImpl implements CompilationsService {
 
     @Override
     public CompilationDto createCompilation(NewCompilationDto compilationDto) {
-        List<EventsEntity> eventsEntities = eventsRepository
-                .findAllById(compilationDto.getEvents());
-        if (eventsEntities.size() != compilationDto.getEvents().size()) {
+        Set<Long> eventIds = compilationDto.getEvents() == null ? Set.of() : compilationDto.getEvents();
+        List<EventsEntity> eventsEntities = eventsRepository.findAllById(eventIds);
+        if (eventsEntities.size() != eventIds.size()) {
             throw new NotFoundException("Some events were not found");
         }
         CompilationEntity compilationEntity = compilationsMapper.toEntity(compilationDto);
@@ -66,7 +69,7 @@ public class CompilationsServiceImpl implements CompilationsService {
                 () -> new NotFoundException("Compilation not found")
         );
 
-        if(compilationDto.getEvents() != null) {
+        if (compilationDto.getEvents() != null) {
             List<EventsEntity> eventsEntities = eventsRepository
                     .findAllById(compilationDto.getEvents());
             if (eventsEntities.size() != compilationDto.getEvents().size()) {

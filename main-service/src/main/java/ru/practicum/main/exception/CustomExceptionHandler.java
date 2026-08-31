@@ -1,11 +1,14 @@
 package ru.practicum.main.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -39,6 +42,42 @@ public class CustomExceptionHandler {
                 HttpStatus.BAD_REQUEST.name(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 ex.getMessage(),
+                LocalDateTime.now()
+                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        );
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ApiError badRequestException(MethodArgumentTypeMismatchException ex) {
+        return new ApiError(
+                HttpStatus.BAD_REQUEST.name(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                "Unknown value of parameter " + ex.getName() + ": " + ex.getValue(),
+                LocalDateTime.now()
+                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        );
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ApiError badRequestException(ConstraintViolationException ex) {
+        return new ApiError(
+                HttpStatus.BAD_REQUEST.name(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getMessage(),
+                LocalDateTime.now()
+                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        );
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ApiError badRequestException(HttpMessageNotReadableException ex) {
+        return new ApiError(
+                HttpStatus.BAD_REQUEST.name(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                "Request body is malformed or contains an unknown value",
                 LocalDateTime.now()
                         .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
         );
