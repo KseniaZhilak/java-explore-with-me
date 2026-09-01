@@ -7,6 +7,7 @@ import ru.practicum.main.categories.dto.UpdateCategoryDto;
 import ru.practicum.main.categories.repository.CategoriesEntity;
 import ru.practicum.main.categories.repository.CategoriesRepository;
 import ru.practicum.main.categories.repository.mapper.CategoriesMapper;
+import ru.practicum.main.events.repository.EventsRepository;
 import ru.practicum.main.exception.ConflictException;
 import ru.practicum.main.exception.NotFoundException;
 
@@ -20,10 +21,13 @@ public class CategoriesServiceImpl implements CategoriesService {
 
     private final CategoriesRepository categoriesRepository;
     private final CategoriesMapper categoriesMapper;
+    private final EventsRepository eventsRepository;
 
-    public CategoriesServiceImpl(CategoriesRepository categoriesRepository, CategoriesMapper categoriesMapper) {
+    public CategoriesServiceImpl(CategoriesRepository categoriesRepository, CategoriesMapper categoriesMapper,
+                                 EventsRepository eventsRepository) {
         this.categoriesRepository = categoriesRepository;
         this.categoriesMapper = categoriesMapper;
+        this.eventsRepository = eventsRepository;
     }
 
     @Override
@@ -58,7 +62,7 @@ public class CategoriesServiceImpl implements CategoriesService {
         if (categories.isEmpty()) {
             throw new NotFoundException("Category not found");
         }
-        if (categoriesRepository.existsByNameEqualsIgnoreCase(updateCategoryDto.getName())) {
+        if (categoriesRepository.existsByNameEqualsIgnoreCaseAndIdNot(updateCategoryDto.getName(), id)) {
             throw new ConflictException("Category already exists");
         }
 
@@ -72,6 +76,9 @@ public class CategoriesServiceImpl implements CategoriesService {
     public void deleteCategory(Long id) {
         if (!categoriesRepository.existsById(id)) {
             throw new NotFoundException("Category not found");
+        }
+        if (eventsRepository.existsByCategoryId(id)) {
+            throw new ConflictException("Category is used by events");
         }
         categoriesRepository.deleteById(id);
     }

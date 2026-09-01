@@ -18,7 +18,6 @@ import ru.practicum.main.events.states.State;
 import ru.practicum.main.events.states.Status;
 import ru.practicum.main.exception.BadRequestException;
 import ru.practicum.main.exception.ConflictException;
-import ru.practicum.main.exception.ForbiddenException;
 import ru.practicum.main.exception.NotFoundException;
 import ru.practicum.main.requests.StatusRequest;
 import ru.practicum.main.requests.dto.ParticipationRequestDto;
@@ -120,7 +119,7 @@ public class EventsServiceImpl implements EventsService {
                 () -> new NotFoundException("Event not found")
         );
         if (!State.PUBLISHED.equals(entity.getState())) {
-            throw new ForbiddenException("Event is not published");
+            throw new NotFoundException("Event not found");
         }
         saveHit(request);
         return toEventFullDtoWithViews(entity);

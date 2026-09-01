@@ -10,6 +10,8 @@ public interface CategoriesRepository extends JpaRepository<CategoriesEntity, Lo
 
     Boolean existsByNameEqualsIgnoreCase(String name);
 
+    Boolean existsByNameEqualsIgnoreCaseAndIdNot(String name, Long id);
+
     @Query(value = "SELECT * FROM categories ORDER BY id LIMIT :size OFFSET :offset", nativeQuery = true)
     List<CategoriesEntity> findAll(@Param("offset") int offset, @Param("size") int size);
 

@@ -10,6 +10,8 @@ import java.util.Optional;
 
 public interface EventsRepository extends JpaRepository<EventsEntity, Long> {
 
+    boolean existsByCategoryId(Long categoryId);
+
     @Query(value = """
             SELECT * FROM events
             WHERE user_id = :userId
