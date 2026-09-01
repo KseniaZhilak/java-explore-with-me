@@ -93,7 +93,7 @@ public class EventsServiceImpl implements EventsService {
                 .orElseThrow(() -> new NotFoundException("Event not found"));
 
         if (PUBLISHED.equals(entity.getState())) {
-            throw new ForbiddenException("Event is already published");
+            throw new ConflictException("Event is already published");
         }
 
         if (eventDto.getCategory() != null) {
@@ -203,7 +203,7 @@ public class EventsServiceImpl implements EventsService {
 
         if (entity.getPublishedOn() != null) {
             if (!entity.getEventDate().isAfter(entity.getPublishedOn().plusHours(1))) {
-                throw new ForbiddenException("Event is already published");
+                throw new ConflictException("Event is already published");
             }
         }
 
@@ -360,7 +360,7 @@ public class EventsServiceImpl implements EventsService {
 
     private static State doUpdateState(EventsEntity entity, State newState) {
         if (!entity.getState().equals(PENDING)) {
-            throw new ForbiddenException("Event is not in pending state");
+            throw new ConflictException("Event is not in pending state");
         }
         entity.setState(newState);
         entity.setPublishedOn(LocalDateTime.now());
