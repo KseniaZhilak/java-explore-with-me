@@ -3,6 +3,7 @@ package ru.practicum.stat.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.stat.dto.EndpointHitDto;
+import ru.practicum.stat.exception.BadRequestException;
 import ru.practicum.stat.dto.ViewStatsDto;
 import ru.practicum.stat.repository.HitEntity;
 import ru.practicum.stat.repository.HitRepository;
@@ -26,6 +27,9 @@ public class StatServiceImpl implements StatService {
 
     @Override
     public List<ViewStatsDto> getListStat(LocalDateTime start, LocalDateTime end, Boolean unique, Collection<String> uris) {
+        if (start == null || end == null || start.isAfter(end)) {
+            throw new BadRequestException("Range start must be before range end");
+        }
         boolean filterByUris = uris != null && !uris.isEmpty();
         if (Boolean.TRUE.equals(unique)) {
             return hitRepository.findUniqueStats(start, end, uris, filterByUris);
