@@ -64,7 +64,7 @@ public class CompilationsServiceImpl implements CompilationsService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public CompilationDto updateCompilation(Long id, UpdateCompilationRequest compilationDto) {
         CompilationEntity compilationEntity = compilationRepository.findById(id).orElseThrow(
                 () -> new NotFoundException("Compilation not found")

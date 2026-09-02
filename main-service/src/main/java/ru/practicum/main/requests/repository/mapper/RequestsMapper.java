@@ -14,6 +14,7 @@ public interface RequestsMapper {
 
     @Mapping(target = "created", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "event.id", source = "eventId")
+    @Mapping(target = "user.id", source = "userId")
     RequestsEntity toEntity(Long eventId, Long userId);
 
     @Mapping(target = "event", source = "event.id")

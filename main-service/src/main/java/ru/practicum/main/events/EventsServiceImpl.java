@@ -362,7 +362,11 @@ public class EventsServiceImpl implements EventsService {
             throw new ConflictException("Event is not in pending state");
         }
         entity.setState(newState);
-        entity.setPublishedOn(LocalDateTime.now());
+
+        if (entity.getState().equals(PUBLISHED)) {
+            entity.setPublishedOn(LocalDateTime.now());
+        }
+
         return newState;
     }
 
