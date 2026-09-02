@@ -67,8 +67,7 @@ public class CategoriesServiceImpl implements CategoriesService {
         }
 
         CategoriesEntity entity = categoriesMapper.toUpdatedEntity(updateCategoryDto, categories.get());
-        CategoriesEntity updatedCategory = categoriesRepository.save(entity);
-        return categoriesMapper.toDto(updatedCategory);
+        return categoriesMapper.toDto(entity);
     }
 
     @Override

@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.practicum.main.events.repository.EventsEntity;
 import ru.practicum.main.requests.StatusRequest;
+import ru.practicum.main.users.repository.UsersEntity;
 
 import java.time.LocalDateTime;
 
@@ -26,10 +28,12 @@ public class RequestsEntity {
     @Enumerated(EnumType.STRING)
     private StatusRequest status;
 
-    @Column(name = "event_id")
-    private Long eventId;
+    @ManyToOne
+    @JoinColumn(name = "event_id", nullable = false)
+    private EventsEntity event;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private UsersEntity user;
 
 }

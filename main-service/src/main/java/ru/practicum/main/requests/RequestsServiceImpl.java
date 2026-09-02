@@ -82,7 +82,7 @@ public class RequestsServiceImpl implements RequestsService {
                 .orElseThrow(() -> new NotFoundException("Request not found"));
 
         if (StatusRequest.CONFIRMED.equals(requestsEntity.getStatus())) {
-            EventsEntity entity = eventsRepository.findById(requestsEntity.getEventId())
+            EventsEntity entity = eventsRepository.findById(requestsEntity.getEvent().getId())
                     .orElseThrow(() -> new NotFoundException("Event not found"));
             entity.setConfirmedRequests(entity.getConfirmedRequests() - 1);
             eventsRepository.save(entity);

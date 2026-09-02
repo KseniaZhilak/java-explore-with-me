@@ -1,7 +1,6 @@
 package ru.practicum.main.exception;
 
 import jakarta.validation.ConstraintViolationException;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,6 +17,19 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class CustomExceptionHandler {
 
+    private static final DateTimeFormatter TIMESTAMP_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({
+            MissingServletRequestParameterException.class,
+            ConstraintViolationException.class,
+            BadRequestException.class
+    })
+    public ApiError badRequestException(Exception ex) {
+        return buildApiError(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiError badRequestException(MethodArgumentNotValidException ex) {
@@ -27,121 +39,47 @@ public class CustomExceptionHandler {
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .collect(Collectors.joining(", "));
 
-        return new ApiError(
-                HttpStatus.BAD_REQUEST.name(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                message,
-                LocalDateTime.now()
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        );
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ApiError badRequestException(MissingServletRequestParameterException ex) {
-        return new ApiError(
-                HttpStatus.BAD_REQUEST.name(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                ex.getMessage(),
-                LocalDateTime.now()
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        );
+        return buildApiError(HttpStatus.BAD_REQUEST, message);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ApiError badRequestException(MethodArgumentTypeMismatchException ex) {
-        return new ApiError(
-                HttpStatus.BAD_REQUEST.name(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                "Unknown value of parameter " + ex.getName() + ": " + ex.getValue(),
-                LocalDateTime.now()
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        );
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ApiError badRequestException(ConstraintViolationException ex) {
-        return new ApiError(
-                HttpStatus.BAD_REQUEST.name(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                ex.getMessage(),
-                LocalDateTime.now()
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        );
+        return buildApiError(HttpStatus.BAD_REQUEST,
+                "Unknown value of parameter " + ex.getName() + ": " + ex.getValue());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ApiError badRequestException(HttpMessageNotReadableException ex) {
-        return new ApiError(
-                HttpStatus.BAD_REQUEST.name(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                "Request body is malformed or contains an unknown value",
-                LocalDateTime.now()
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        );
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(BadRequestException.class)
-    public ApiError badRequestException(BadRequestException ex) {
-        return new ApiError(
-                HttpStatus.BAD_REQUEST.name(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                ex.getMessage(),
-                LocalDateTime.now()
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        );
-    }
-
-    @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ApiError conflictException(DataIntegrityViolationException ex) {
-        return new ApiError(
-                HttpStatus.CONFLICT.name(),
-                HttpStatus.CONFLICT.getReasonPhrase(),
-                "Operation violates data integrity constraints",
-                LocalDateTime.now()
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        );
+        return buildApiError(HttpStatus.BAD_REQUEST,
+                "Request body is malformed or contains an unknown value");
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(ConflictException.class)
     public ApiError conflictException(ConflictException ex) {
-        return new ApiError(
-                HttpStatus.CONFLICT.name(),
-                HttpStatus.CONFLICT.getReasonPhrase(),
-                ex.getMessage(),
-                LocalDateTime.now()
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        );
+        return buildApiError(HttpStatus.CONFLICT, ex.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
     public ApiError notFoundException(NotFoundException ex) {
-        return new ApiError(
-                HttpStatus.NOT_FOUND.name(),
-                HttpStatus.NOT_FOUND.getReasonPhrase(),
-                ex.getMessage(),
-                LocalDateTime.now()
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        );
+        return buildApiError(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(ForbiddenException.class)
     public ApiError forbiddenException(ForbiddenException ex) {
-        return new ApiError(
-                HttpStatus.FORBIDDEN.name(),
-                HttpStatus.FORBIDDEN.getReasonPhrase(),
-                ex.getMessage(),
-                LocalDateTime.now()
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        );
+        return buildApiError(HttpStatus.FORBIDDEN, ex.getMessage());
     }
 
+    private ApiError buildApiError(HttpStatus status, String message) {
+        return new ApiError(
+                status.name(),
+                status.getReasonPhrase(),
+                message,
+                LocalDateTime.now().format(TIMESTAMP_FORMATTER)
+        );
+    }
 }

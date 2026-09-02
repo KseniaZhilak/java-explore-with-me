@@ -42,8 +42,10 @@ public class EventsEntity {
     @Column(name = "event_date", nullable = false)
     private LocalDateTime eventDate;
 
+    @Column(name = "lat")
     private Double lat;
 
+    @Column(name = "lon")
     private Double lon;
 
     @Column(nullable = false)
@@ -52,12 +54,14 @@ public class EventsEntity {
     @Column(name = "participant_limit")
     private Integer participantLimit;
 
+    @Column(name = "published_on")
     private LocalDateTime publishedOn;
 
     @Column(name = "request_moderation")
     private Boolean requestModeration;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "state")
     private State state;
 
     @Column(nullable = false)

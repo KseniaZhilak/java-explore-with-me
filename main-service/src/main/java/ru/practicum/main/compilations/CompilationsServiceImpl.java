@@ -64,6 +64,7 @@ public class CompilationsServiceImpl implements CompilationsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CompilationDto updateCompilation(Long id, UpdateCompilationRequest compilationDto) {
         CompilationEntity compilationEntity = compilationRepository.findById(id).orElseThrow(
                 () -> new NotFoundException("Compilation not found")
@@ -80,9 +81,8 @@ public class CompilationsServiceImpl implements CompilationsService {
 
         CompilationEntity updated = compilationsMapper
                 .toEntity(compilationEntity, compilationDto);
-        CompilationEntity saved = compilationRepository.save(updated);
 
-        return compilationsMapper.toDto(saved);
+        return compilationsMapper.toDto(updated);
     }
 
     @Override

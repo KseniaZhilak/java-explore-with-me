@@ -13,10 +13,11 @@ import static org.mapstruct.ReportingPolicy.IGNORE;
 public interface RequestsMapper {
 
     @Mapping(target = "created", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "event.id", source = "eventId")
     RequestsEntity toEntity(Long eventId, Long userId);
 
-    @Mapping(target = "event", source = "eventId")
-    @Mapping(target = "requester", source = "userId")
+    @Mapping(target = "event", source = "event.id")
+    @Mapping(target = "requester", source = "user.id")
     ParticipationRequestDto toDto(RequestsEntity requestsEntity);
 
 }
