@@ -2,4 +2,4 @@
 Template repository for ExploreWithMe project.
 
 ## Ссылка на пул-реквест
-https://github.com/KseniaZhilak/java-explore-with-me/pull/4
+https://github.com/KseniaZhilak/java-explore-with-me/pull/5
