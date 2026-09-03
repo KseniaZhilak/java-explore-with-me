@@ -2,6 +2,7 @@ package ru.practicum.stat.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.stat.dto.EndpointHitDto;
 import ru.practicum.stat.dto.ViewStatsDto;
@@ -33,6 +34,7 @@ public class StatsController {
         return statService.getListStat(start, end, unique, uris);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/hit")
     public EndpointHitDto createStat(@RequestBody @Valid EndpointHitDto hitDto) {
         return statService.createHit(hitDto);
