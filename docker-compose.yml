@@ -3,6 +3,10 @@ services:
     ports:
       - "9090:9090"
     build: ./stats/server-stat
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/statsdb
+      - SPRING_DATASOURCE_USERNAME=dbuser
+      - SPRING_DATASOURCE_PASSWORD=12345
     depends_on:
       stats-db:
         condition: service_healthy
@@ -19,7 +23,7 @@ services:
       - POSTGRES_USER=dbuser
       - POSTGRES_PASSWORD=12345
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U app -d app" ]
+      test: [ "CMD-SHELL", "pg_isready -U dbuser -d statsdb" ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -29,7 +33,29 @@ services:
     ports:
       - "8080:8080"
     build: ./main-service
+    environment:
+      - STATS_SERVER_URL=http://stats-server:9090
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/maindb
+      - SPRING_DATASOURCE_USERNAME=main
+      - SPRING_DATASOURCE_PASSWORD=12345
+    depends_on:
+      main-db:
+        condition: service_healthy
+      stats-server:
+        condition: service_started
 
-#  main-db:
-#    image: postgres:16.1
-#    container_name: postgres_main
+  main-db:
+    image: postgres:16.1
+    container_name: postgres_main
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_DB=maindb
+      - POSTGRES_USER=main
+      - POSTGRES_PASSWORD=12345
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U main -d maindb" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
